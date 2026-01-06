@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PassNest 𝐁𝐲 ➤ 𝗠 𝗛 {𝗦𝗵𝗮𝗵𝗶𝗻}</title>
     
-    <!-- PWA Manifest (inline) and Theme -->
-    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIlBhc3NOZXN0IOCpueCpieCpreCpjSDgqY/gqao+IOCpnyDgp5og4KaBLeCpnyDgpqjgprAg4Ka84Ka+4KaoIiwKICAic2hvcnRfbmFtZSI6ICJQYXNzTmVzdCIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZmZmZmZmIiwKICAidGhlbWVfY29sb3IiOiAiIzAwN0JGRiIsCiAgImRlc2NyaXB0aW9uIjogIuCpqOCpr+CpreCpqOCpvuCmmuCnhyDgpqrgp4Hgpqjgpr/gpp/gp43gpp/gpr/gpqgg4Kav4KeN4KaoIOCpoeCphuCmsOCnhyDgpqvgpqgiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJpY29uLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IG1hc2thYmxlIgogICAgfQogIF0KfQ==">
+    <!-- PWA Manifest and Theme -->
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#007BFF"/>
     <link rel="apple-touch-icon" href="icon.png">
 
@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
+        /* All CSS code remains unchanged */
         :root {
             --primary-color: #007BFF; --secondary-color: #6c757d; --background-color: #f4f7f6;
             --card-bg-color: #ffffff; --text-color: #333; --shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -200,47 +201,17 @@
     </div>
     <div id="toastNotification"></div>
 
-    <!-- Service Worker and Manifest Scripts -->
-    <script type="text/javascript">
-        // Create Service Worker file
-        const swCode = `
-            const CACHE_NAME = 'passnest-cache-v1';
-            const urlsToCache = [
-              './',
-              './index.html'
-            ];
-            self.addEventListener('install', event => {
-              event.waitUntil(
-                caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
-              );
-            });
-            self.addEventListener('fetch', event => {
-              event.respondWith(
-                caches.match(event.request).then(response => {
-                  return response || fetch(event.request);
-                })
-              );
-            });
-        `;
-        const swBlob = new Blob([swCode], { type: 'application/javascript' });
-        const swUrl = URL.createObjectURL(swBlob);
-        
-        // Register Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register(swUrl).then(registration => {
-                    console.log('ServiceWorker registration successful');
-                }).catch(err => {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-            });
-        }
-    </script>
-    
     <script>
         const STORAGE_KEY = 'passwords_final';
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Register Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => console.log('ServiceWorker registration successful.'))
+                    .catch(err => console.log('ServiceWorker registration failed: ', err));
+            }
+
             migrateOldData();
             const savedTheme = localStorage.getItem('theme') || 'light';
             if (savedTheme === 'dark') {
@@ -556,4 +527,4 @@
         window.onclick = (event) => { if (event.target.classList.contains('modal')) event.target.style.display = "none"; }
     </script>
 </body>
-</html>
+    </html>
