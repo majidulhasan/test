@@ -1,5 +1,5 @@
 
-import { StorageData } from '../types';
+import { StorageData } from '../types.ts';
 
 const STORAGE_KEY = 'amar_khata_v2';
 
@@ -37,8 +37,6 @@ export const storage = {
 
   saveData: (data: StorageData) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    
-    // Simple Auto-Backup Logic (Save to another key daily)
     const today = new Date().toISOString().split('T')[0];
     if (data.settings.lastAutoBackup !== today) {
       localStorage.setItem(`${STORAGE_KEY}_auto_backup`, JSON.stringify(data));
