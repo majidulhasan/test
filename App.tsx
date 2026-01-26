@@ -18,10 +18,7 @@ import AddCategoryModal from './components/AddCategoryModal';
 import DeveloperModal from './components/DeveloperModal';
 
 const App: React.FC = () => {
-  // Persistence Loading State
   const [isInitialized, setIsInitialized] = useState(false);
-
-  // App Data States
   const [passwords, setPasswords] = useState<PasswordEntry[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [customColors, setCustomColors] = useState<string[]>([]);
@@ -35,7 +32,6 @@ const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState('all');
   
-  // UI states
   const [isLocked, setIsLocked] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
@@ -47,7 +43,6 @@ const App: React.FC = () => {
 
   const lastActivityRef = useRef<number>(Date.now());
 
-  // Initialization: Load from LocalStorage
   useEffect(() => {
     const savedData = localStorage.getItem('passnest_data');
     if (savedData) {
@@ -60,10 +55,7 @@ const App: React.FC = () => {
         setMasterPassword(parsed.masterPassword);
         setPinLength(parsed.pinLength || 4);
         setSecurityQuestions(parsed.securityQuestions || []);
-        const savedSecs = (parsed as any).autoLockMinutes !== undefined 
-          ? (parsed as any).autoLockMinutes * 60 
-          : (parsed.autoLockSeconds ?? 300);
-        setAutoLockSeconds(savedSecs);
+        setAutoLockSeconds(parsed.autoLockSeconds ?? 300);
         setLockOnExit(parsed.lockOnExit ?? true);
       } catch (e) {
         console.error("Failed to parse saved data", e);
@@ -72,58 +64,14 @@ const App: React.FC = () => {
     setIsInitialized(true);
   }, []);
 
-  // Sync state back to LocalStorage
   useEffect(() => {
     if (isInitialized) {
       const data: AppState = { passwords, categories, customColors, isDarkMode, masterPassword, pinLength, autoLockSeconds, lockOnExit, securityQuestions };
       localStorage.setItem('passnest_data', JSON.stringify(data));
-      
-      if (isDarkMode) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
+      if (isDarkMode) document.documentElement.classList.add('dark');
+      else document.documentElement.classList.remove('dark');
     }
   }, [passwords, categories, customColors, isDarkMode, masterPassword, pinLength, autoLockSeconds, lockOnExit, securityQuestions, isInitialized]);
-
-  // Inactivity tracking
-  useEffect(() => {
-    if (!isInitialized) return;
-
-    const updateActivity = () => {
-      lastActivityRef.current = Date.now();
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden' && lockOnExit && !isLocked && masterPassword) {
-        setIsLocked(true);
-      }
-    };
-
-    window.addEventListener('mousemove', updateActivity);
-    window.addEventListener('keydown', updateActivity);
-    window.addEventListener('click', updateActivity);
-    window.addEventListener('scroll', updateActivity);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    const checkInactivity = setInterval(() => {
-      if (!isLocked && masterPassword && autoLockSeconds > 0) {
-        const inactiveTimeSecs = (Date.now() - lastActivityRef.current) / 1000;
-        if (inactiveTimeSecs >= autoLockSeconds) {
-          setIsLocked(true);
-        }
-      }
-    }, 1000);
-
-    return () => {
-      window.removeEventListener('mousemove', updateActivity);
-      window.removeEventListener('keydown', updateActivity);
-      window.removeEventListener('click', updateActivity);
-      window.removeEventListener('scroll', updateActivity);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      clearInterval(checkInactivity);
-    };
-  }, [isLocked, masterPassword, autoLockSeconds, lockOnExit, isInitialized]);
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
@@ -145,7 +93,7 @@ const App: React.FC = () => {
     if (recoveryQuestions) setSecurityQuestions(recoveryQuestions);
     setIsLocked(false);
     lastActivityRef.current = Date.now();
-    showToast('মাস্টার পাসওয়ার্ড সেটআপ সফল হয়েছে!');
+    showToast('মাস্টার পাসওয়ার্ড সেটআপ সফল!');
   };
 
   const handleSavePassword = (data: any) => {
@@ -179,51 +127,54 @@ const App: React.FC = () => {
         createdAt: Date.now(),
       };
       setPasswords(prev => [newEntry, ...prev]);
-      showToast('পাসওয়ার্ড সফলভাবে যোগ করা হয়েছে!');
+      showToast('পাসওয়ার্ড যোগ করা হয়েছে!');
     }
     setIsAddModalOpen(false);
     setEditingPassword(null);
   };
 
-  const handleDeletePassword = (id: string) => {
-    setPasswords(prev => prev.filter(p => p.id !== id));
-    setDeletingId(null);
-    showToast('পাসওয়ার্ড মুছে ফেলা হয়েছে', 'error');
-  };
+  const handleImportData = (json: string) => {
+    try {
+      const parsed = JSON.parse(json);
+      if (!parsed.passwords || !Array.isArray(parsed.passwords)) {
+        showToast('ভুল ফাইল ফরম্যাট', 'error');
+        return;
+      }
 
-  const handleAddCategory = (name: string, color: string) => {
-    const newCat: Category = {
-      id: Math.random().toString(36).substr(2, 9),
-      name,
-      color,
-    };
-    setCategories(prev => [...prev, newCat]);
-    setIsAddCategoryModalOpen(false);
-    showToast('নতুন ক্যাটাগরি যোগ করা হয়েছে');
-  };
+      let addedCount = 0;
+      let skippedCount = 0;
 
-  const handleUpdateCategory = (id: string, newName: string, newColor: string) => {
-    setCategories(prev => prev.map(c => c.id === id ? { ...c, name: newName, color: newColor } : c));
-    showToast('ক্যাটাগরি আপডেট করা হয়েছে');
-  };
+      const mergedPasswords = [...passwords];
+      
+      parsed.passwords.forEach((newPw: PasswordEntry) => {
+        const exists = passwords.find(p => 
+          p.title.toLowerCase().trim() === newPw.title.toLowerCase().trim() && 
+          p.username.toLowerCase().trim() === newPw.username.toLowerCase().trim()
+        );
 
-  const handleDeleteCategory = (id: string) => {
-    setCategories(prev => prev.filter(c => c.id !== id));
-    setPasswords(prev => prev.filter(p => p.categoryId !== id));
-    if (selectedCategoryId === id) setSelectedCategoryId('all');
-    showToast('ক্যাটাগরি এবং এর পাসওয়ার্ডগুলো মুছে ফেলা হয়েছে', 'error');
-  };
+        if (!exists) {
+          mergedPasswords.push({
+            ...newPw,
+            id: Math.random().toString(36).substr(2, 9) // নতুন ID দেওয়া হলো যাতে কনফ্লিক্ট না হয়
+          });
+          addedCount++;
+        } else {
+          skippedCount++;
+        }
+      });
 
-  const handleAddCustomColor = (color: string) => {
-    if (!customColors.includes(color)) {
-      setCustomColors(prev => [color, ...prev]);
-      showToast('কাস্টম রঙ যোগ করা হয়েছে');
+      setPasswords(mergedPasswords);
+      
+      if (parsed.categories) {
+        const existingCatNames = categories.map(c => c.name.toLowerCase().trim());
+        const newCats = parsed.categories.filter((c: Category) => !existingCatNames.includes(c.name.toLowerCase().trim()));
+        setCategories(prev => [...prev, ...newCats]);
+      }
+
+      showToast(`${addedCount}টি নতুন পাসওয়ার্ড যোগ করা হয়েছে${skippedCount > 0 ? `, ${skippedCount}টি আগে থেকেই ছিল` : ''}`);
+    } catch (e) {
+      showToast('রিস্টোর করা সম্ভব হয়নি', 'error');
     }
-  };
-
-  const handleDeleteCustomColor = (color: string) => {
-    setCustomColors(prev => prev.filter(c => c !== color));
-    showToast('রঙ মুছে ফেলা হয়েছে', 'error');
   };
 
   const filteredPasswords = useMemo(() => {
@@ -234,7 +185,6 @@ const App: React.FC = () => {
     });
   }, [passwords, searchQuery, selectedCategoryId]);
 
-  // Loading indicator until state is loaded from localStorage
   if (!isInitialized) {
     return (
       <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
@@ -328,8 +278,13 @@ const App: React.FC = () => {
         customColors={customColors}
         isDarkMode={isDarkMode} 
       />
-      <AddCategoryModal isOpen={isAddCategoryModalOpen} onClose={() => setIsAddCategoryModalOpen(false)} onSave={handleAddCategory} customColors={customColors} isDarkMode={isDarkMode} />
-      <DeleteConfirmModal isOpen={deletingId !== null} title={passwords.find(p => p.id === deletingId)?.title || ''} onClose={() => setDeletingId(null)} onConfirm={() => deletingId && handleDeletePassword(deletingId)} isDarkMode={isDarkMode} />
+      <AddCategoryModal isOpen={isAddCategoryModalOpen} onClose={() => setIsAddCategoryModalOpen(false)} onSave={(n, c) => {
+        const newCat: Category = { id: Math.random().toString(36).substr(2, 9), name: n, color: c };
+        setCategories(prev => [...prev, newCat]);
+        setIsAddCategoryModalOpen(false);
+      }} customColors={customColors} isDarkMode={isDarkMode} />
+      
+      <DeleteConfirmModal isOpen={deletingId !== null} title={passwords.find(p => p.id === deletingId)?.title || ''} onClose={() => setDeletingId(null)} onConfirm={() => deletingId && setPasswords(prev => prev.filter(p => p.id !== deletingId))} isDarkMode={isDarkMode} />
       
       <SettingsModal 
         isOpen={isSettingsOpen} 
@@ -338,11 +293,11 @@ const App: React.FC = () => {
         setIsDarkMode={setIsDarkMode} 
         categories={categories} 
         customColors={customColors}
-        onAddCategory={handleAddCategory} 
-        onUpdateCategory={handleUpdateCategory} 
-        onDeleteCategory={handleDeleteCategory}
-        onAddCustomColor={handleAddCustomColor}
-        onDeleteCustomColor={handleDeleteCustomColor}
+        onAddCategory={(n, c) => setCategories(prev => [...prev, { id: Math.random().toString(36).substr(2, 9), name: n, color: c }])} 
+        onUpdateCategory={(id, n, c) => setCategories(prev => prev.map(cat => cat.id === id ? { ...cat, name: n, color: c } : cat))} 
+        onDeleteCategory={(id) => { setCategories(prev => prev.filter(c => c.id !== id)); setPasswords(prev => prev.filter(p => p.categoryId !== id)); }}
+        onAddCustomColor={(c) => setCustomColors(prev => [c, ...prev])}
+        onDeleteCustomColor={(c) => setCustomColors(prev => prev.filter(col => col !== c))}
         onReorderCategories={(cats) => setCategories(cats)}
         autoLockSeconds={autoLockSeconds} 
         setAutoLockSeconds={setAutoLockSeconds} 
@@ -353,7 +308,7 @@ const App: React.FC = () => {
         onSetMasterPassword={handleSetMasterPassword} 
         securityQuestions={securityQuestions} 
         onExportData={() => { const data = JSON.stringify({ passwords, categories, customColors, masterPassword, pinLength, autoLockSeconds, lockOnExit, securityQuestions }); const blob = new Blob([data], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `PassNest_Backup.json`; a.click(); }} 
-        onImportData={(json) => { try { const p = JSON.parse(json); if(p.passwords) setPasswords(p.passwords); if(p.categories) setCategories(p.categories); if(p.customColors) setCustomColors(p.customColors); if(p.pinLength) setPinLength(p.pinLength); showToast('তথ্য রিস্টোর করা হয়েছে!'); } catch(e) { showToast('ভুল ফাইল', 'error'); } }} 
+        onImportData={handleImportData} 
         onDeleteAll={() => { localStorage.clear(); window.location.reload(); }}
         onOpenDeveloper={() => setIsDeveloperModalOpen(true)}
       />
