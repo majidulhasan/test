@@ -18,7 +18,10 @@ import AddCategoryModal from './components/AddCategoryModal';
 import DeveloperModal from './components/DeveloperModal';
 
 const App: React.FC = () => {
-  // State
+  // Persistence Loading State
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // App Data States
   const [passwords, setPasswords] = useState<PasswordEntry[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [customColors, setCustomColors] = useState<string[]>([]);
@@ -44,7 +47,7 @@ const App: React.FC = () => {
 
   const lastActivityRef = useRef<number>(Date.now());
 
-  // Persistence
+  // Initialization: Load from LocalStorage
   useEffect(() => {
     const savedData = localStorage.getItem('passnest_data');
     if (savedData) {
@@ -66,21 +69,27 @@ const App: React.FC = () => {
         console.error("Failed to parse saved data", e);
       }
     }
+    setIsInitialized(true);
   }, []);
 
+  // Sync state back to LocalStorage
   useEffect(() => {
-    const data: AppState = { passwords, categories, customColors, isDarkMode, masterPassword, pinLength, autoLockSeconds, lockOnExit, securityQuestions };
-    localStorage.setItem('passnest_data', JSON.stringify(data));
-    
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+    if (isInitialized) {
+      const data: AppState = { passwords, categories, customColors, isDarkMode, masterPassword, pinLength, autoLockSeconds, lockOnExit, securityQuestions };
+      localStorage.setItem('passnest_data', JSON.stringify(data));
+      
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     }
-  }, [passwords, categories, customColors, isDarkMode, masterPassword, pinLength, autoLockSeconds, lockOnExit, securityQuestions]);
+  }, [passwords, categories, customColors, isDarkMode, masterPassword, pinLength, autoLockSeconds, lockOnExit, securityQuestions, isInitialized]);
 
-  // Activity Tracking
+  // Inactivity tracking
   useEffect(() => {
+    if (!isInitialized) return;
+
     const updateActivity = () => {
       lastActivityRef.current = Date.now();
     };
@@ -114,7 +123,7 @@ const App: React.FC = () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       clearInterval(checkInactivity);
     };
-  }, [isLocked, masterPassword, autoLockSeconds, lockOnExit]);
+  }, [isLocked, masterPassword, autoLockSeconds, lockOnExit, isInitialized]);
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
@@ -224,6 +233,15 @@ const App: React.FC = () => {
       return matchesSearch && matchesCategory;
     });
   }, [passwords, searchQuery, selectedCategoryId]);
+
+  // Loading indicator until state is loaded from localStorage
+  if (!isInitialized) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   if (isLocked) {
     return (
