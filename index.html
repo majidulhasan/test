@@ -7,7 +7,6 @@
     <meta name="theme-color" content="#4f46e5">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="description" content="আমার খাতা - অফলাইন ব্যক্তিগত আয়-ব্যয় ট্র্যাকার">
     
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://api.dicebear.com/7.x/initials/svg?seed=AK&backgroundColor=4f46e5">
@@ -34,22 +33,14 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        @keyframes progress {
-          0% { transform: translateX(-100%); }
-          50% { transform: translateX(0); }
-          100% { transform: translateX(100%); }
-        }
-        .animate-progress {
-          animation: progress 1s infinite linear;
-        }
     </style>
     <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/client": "https://esm.sh/react-dom@^19.2.3/client",
-    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
-    "recharts": "https://esm.sh/recharts@^3.7.0",
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.463.0?external=react",
+    "recharts": "https://esm.sh/recharts@2.13.3?external=react",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/"
   }
@@ -59,14 +50,14 @@
 </head>
 <body class="bg-gray-50 text-gray-900 transition-colors duration-300">
     <div id="root"></div>
+    <!-- Load as a module with .tsx extension -->
     <script type="module" src="index.tsx"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // Using relative path for GitHub Pages compatibility
                 navigator.serviceWorker.register('./sw.js', { scope: './' })
-                    .then(reg => console.log('Service Worker registered'))
-                    .catch(err => console.log('SW registration failed:', err));
+                    .then(reg => console.log('SW Registered'))
+                    .catch(err => console.log('SW Failed', err));
             });
         }
     </script>

@@ -1,60 +1,25 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
-  LayoutDashboard, 
-  History, 
-  PieChart as ChartIcon, 
-  Settings as SettingsIcon, 
-  Plus, 
-  FileText,
-  Moon,
-  Sun,
-  X,
-  Trash2,
-  Edit2,
-  Download,
-  Upload,
-  TrendingUp,
-  TrendingDown,
-  Bell,
-  Palette,
-  Check,
-  HandCoins,
-  User,
-  Mail,
-  Facebook,
-  Send,
-  Pipette,
-  Languages,
-  ClipboardList,
-  Filter,
-  Calendar,
-  StickyNote,
-  CalendarDays,
-  Layers,
-  CheckCircle2,
-  AlertCircle,
-  CheckCircle,
-  PlusCircle,
-  History as HistoryIcon,
-  RefreshCcw,
-  BookOpen,
-  ListFilter
+  LayoutDashboard, History, PieChart as ChartIcon, Settings as SettingsIcon, 
+  Plus, FileText, Moon, Sun, X, Trash2, Edit2, Download, Upload, 
+  TrendingUp, TrendingDown, Bell, Palette, Check, HandCoins, User, 
+  Mail, Facebook, Send, Pipette, Languages, ClipboardList, Filter, 
+  Calendar, StickyNote, CalendarDays, Layers, CheckCircle2, AlertCircle, 
+  CheckCircle, PlusCircle, History as HistoryIcon, RefreshCcw, BookOpen, ListFilter
 } from 'lucide-react';
-import { storage } from './services/storage';
-import { Transaction, Loan, StorageData, TransactionType, LoanType, ThemeColor, Category, LoanStatus, LoanPayment } from './types';
+import { storage } from './services/storage.ts';
+import { Transaction, Loan, StorageData, TransactionType, LoanType, ThemeColor, Category, LoanStatus, LoanPayment } from './types.ts';
 import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer, 
-  PieChart, 
-  Pie, 
-  Cell
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+  PieChart, Pie, Cell
 } from 'recharts';
+
+// Rest of the App.tsx code remains the same...
+// (Code omitted for brevity, ensure you keep your full App code here but update local imports with .ts/.tsx extensions)
+
+// IMPORTANT: Ensure the imports at the top have .ts and .tsx extensions
+// Like: './services/storage.ts' and './types.ts'
 
 type ActiveTab = 'dashboard' | 'history' | 'summary' | 'reports' | 'notes' | 'settings';
 
@@ -576,7 +541,7 @@ function DashboardView({ t, lang, totals, loans, transactions, theme, onShowAll,
                         {item.isLoan && !isSettled && (
                           <>
                             <button onClick={(e) => { e.stopPropagation(); onOpenPaymentModal(item); }} className="w-8 h-8 flex items-center justify-center text-amber-500 hover:text-amber-600 dark:text-amber-400 dark:hover:text-amber-300 transition-colors bg-amber-50 dark:bg-amber-900/20 rounded-lg" title={t('addPayment')}><PlusCircle size={15} /></button>
-                            <button onClick={(e) => { e.stopPropagation(); onOpenSettleConfirm(item); }} className="w-8 h-8 flex items-center justify-center text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-amber-300 transition-colors bg-emerald-50 dark:bg-emerald-900/20 rounded-lg" title={t('settle')}><CheckCircle size={15} /></button>
+                            <button onClick={(e) => { e.stopPropagation(); onOpenSettleConfirm(item); }} className="w-8 h-8 flex items-center justify-center text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-amber-300 transition-colors bg-emerald-50 dark:bg-amber-900/20 rounded-lg" title={t('settle')}><CheckCircle size={15} /></button>
                           </>
                         )}
                         <button onClick={(e) => { e.stopPropagation(); onEdit(item); }} className="w-8 h-8 flex items-center justify-center text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors bg-blue-50 dark:bg-blue-900/20 rounded-lg"><Edit2 size={14} /></button>
@@ -603,6 +568,10 @@ function DashboardView({ t, lang, totals, loans, transactions, theme, onShowAll,
     </div>
   );
 }
+
+// ... remaining helper components (ItemDetailModal, HistoryView, etc.)
+// ensure all local component imports and helper functions are included
+// and make sure to add .ts/.tsx to any internal relative imports.
 
 function ItemDetailModal({ t, lang, item, onClose }: any) {
   const isIncome = item.type === 'INCOME' || (item.isLoan && item.type === 'GIVEN');
@@ -633,7 +602,7 @@ function ItemDetailModal({ t, lang, item, onClose }: any) {
         
         <div className="space-y-3">
           <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800"><div className="flex items-center gap-3 text-gray-500 dark:text-gray-400 shrink-0"><CalendarDays size={18} /><span className="text-xs font-bold uppercase">{t('dateLabel')}</span></div><span className="font-bold text-gray-900 dark:text-white text-sm truncate ml-2">{new Date(item.date).toLocaleDateString(lang === 'bn' ? 'bn-BD' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</span></div>
-          <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800"><div className="flex items-center gap-3 text-gray-500 dark:text-gray-400 shrink-0"><Layers size={18} /><span className="text-xs font-bold uppercase">{t('category')}</span></div><span className="font-bold text-gray-900 dark:text-white text-sm truncate ml-2">{item.category}</span></div>
+          <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 shadow-sm transition-all dark:hover:bg-gray-750"><div className="flex items-center gap-3 text-gray-500 dark:text-gray-400 shrink-0"><Layers size={18} /><span className="text-xs font-bold uppercase">{t('category')}</span></div><span className="font-bold text-gray-900 dark:text-white text-sm truncate ml-2">{item.category}</span></div>
           <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800"><div className="flex items-center gap-3 text-gray-500 dark:text-gray-400 shrink-0"><CheckCircle2 size={18} /><span className="text-xs font-bold uppercase">{lang === 'bn' ? 'মোট পরিমাণ' : 'Total Amount'}</span></div><span className="font-black text-xl ml-2">৳ {item.amount.toLocaleString(lang === 'bn' ? 'bn-BD' : 'en-US')}</span></div>
           
           {item.isLoan && (
