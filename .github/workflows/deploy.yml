@@ -1,10 +1,9 @@
 
-
 name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ "main" ] # আপনার মেইন ব্রাঞ্চের নাম যদি অন্য কিছু হয় তবে তা এখানে দিন
+    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -22,7 +21,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
       - name: Install dependencies
         run: npm install
