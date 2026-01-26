@@ -685,7 +685,7 @@ function TransactionCard({ item, t, lang, onShowDetail, onOpenPaymentModal, onOp
             {item.isLoan && !isSettled && (
               <>
                 <button onClick={(e) => { e.stopPropagation(); onOpenPaymentModal(item); }} className="w-9 h-9 flex items-center justify-center text-amber-500 bg-amber-50 dark:bg-amber-900/20 rounded-xl shadow-sm border border-amber-100/50 dark:border-amber-900/30 transition-all active:scale-90" title={t('addPayment')}><PlusCircle size={18} /></button>
-                <button onClick={(e) => { e.stopPropagation(); onOpenSettleConfirm(item); }} className="w-9 h-9 flex items-center justify-center text-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl shadow-sm border border-emerald-100/50 dark:border-emerald-900/30 transition-all active:scale-90" title={t('settle')}><CheckCircle size={18} /></button>
+                <button onClick={(e) => { e.stopPropagation(); onOpenSettleConfirm(item); }} className="w-9 h-9 flex items-center justify-center text-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl shadow-sm border border-emerald-100/50 dark:border-amber-900/30 transition-all active:scale-90" title={t('settle')}><CheckCircle size={18} /></button>
               </>
             )}
             <button onClick={(e) => { e.stopPropagation(); onEdit(item); }} className="w-9 h-9 flex items-center justify-center text-blue-500 bg-blue-50 dark:bg-blue-900/20 rounded-xl shadow-sm border border-blue-100/50 dark:border-blue-900/30 transition-all active:scale-90"><Edit2 size={16} /></button>
@@ -1173,7 +1173,7 @@ function StatBadge({ label, value, color, lang }: any) {
   return (
     <div className={`p-6 rounded-[2.5rem] border shadow-sm text-center transition-all hover:scale-110 active:scale-95 ${colors[color]}`}>
       <p className="text-[10px] font-black uppercase tracking-widest mb-2 opacity-70 leading-none">{label}</p>
-      <p className={`text-[16px] font-black tabular-nums truncate tracking-tight text-slate-900 dark:text-white`}>৳{value.toLocaleString(lang === 'bn' ? 'bn-BD' : 'en-US')}</p>
+      <p className={`text-[16px] font-black tabular-nums truncate tracking-tight text-slate-900 dark:text-white text-slate-900 dark:text-white`}>৳{value.toLocaleString(lang === 'bn' ? 'bn-BD' : 'en-US')}</p>
     </div>
   );
 }
@@ -1536,7 +1536,6 @@ function CategoryManagerModal({ t, lang, onClose, categories, onUpdateCategories
 
         <div className="flex gap-5 mb-12 relative">
           <input type="text" value={newLabel} onChange={e => setNewLabel(e.target.value)} placeholder={editingCategory ? "সংশোধন..." : "নতুন নাম..."} className="flex-1 p-7 bg-slate-50 dark:bg-slate-950/50 rounded-[2.2rem] border-none outline-none font-black text-[16px] text-slate-900 dark:text-white shadow-inner" />
-          {/* Fixed: Replaced incorrect custom handleSave prop with standard onClick event */}
           <button onClick={handleSave} className={`p-7 ${accentClass} text-white rounded-[2.2rem] shadow-2xl transition-all active:scale-90`}>
             {editingCategory ? <RefreshCcw size={28} strokeWidth={3} /> : <Plus size={28} strokeWidth={3} />}
           </button>
