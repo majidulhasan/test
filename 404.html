@@ -1,0 +1,16 @@
+
+<!-- This file allows GitHub Pages to handle refreshes on sub-routes by loading index.html content -->
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript">
+        // Redirect back to index.html to let React handle the routing
+        var l = window.location;
+        l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + l.pathname.split('/').slice(0, 1).join('/') + '/?p=' + l.pathname.split('/').slice(1).join('/').replace(/&/g, '~and~'));
+    </script>
+</head>
+<body>
+    রিডাইরেক্ট হচ্ছে...
+</body>
+</html>
