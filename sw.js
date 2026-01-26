@@ -1,8 +1,9 @@
-
-const CACHE_NAME = 'amar-khata-cache-v1';
+const CACHE_NAME = 'amar-khata-cache-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
+  './index.tsx',
+  './types.ts',
   './manifest.json',
   'https://cdn.tailwindcss.com',
   'https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap'
