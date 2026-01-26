@@ -1,4 +1,4 @@
-const CACHE_NAME = 'amar-khata-v2.5-cache';
+const CACHE_NAME = 'amar-khata-pwa-v2.6';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

@@ -1173,7 +1173,7 @@ function StatBadge({ label, value, color, lang }: any) {
   return (
     <div className={`p-6 rounded-[2.5rem] border shadow-sm text-center transition-all hover:scale-110 active:scale-95 ${colors[color]}`}>
       <p className="text-[10px] font-black uppercase tracking-widest mb-2 opacity-70 leading-none">{label}</p>
-      <p className={`text-[16px] font-black tabular-nums truncate tracking-tight text-slate-900 dark:text-white text-slate-900 dark:text-white`}>৳{value.toLocaleString(lang === 'bn' ? 'bn-BD' : 'en-US')}</p>
+      <p className={`text-[16px] font-black tabular-nums truncate tracking-tight text-slate-900 dark:text-white`}>৳{value.toLocaleString(lang === 'bn' ? 'bn-BD' : 'en-US')}</p>
     </div>
   );
 }
@@ -1320,7 +1320,7 @@ function PaymentModal({ t, lang, loan, onClose, onSubmit, theme }: any) {
   return (
     <div className="fixed inset-0 z-[140] flex items-center justify-center p-6 animate-in fade-in duration-300">
       <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-xl" onClick={onClose}></div>
-      <div className="relative bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3.8rem] p-12 shadow-2xl border border-white/10 dark:border-slate-800/50 animate-in zoom-in-95 duration-500">
+      <div className="relative bg-white dark:bg-slate-900 w-full max-sm:w-[95%] max-w-sm rounded-[3.8rem] p-12 shadow-2xl border border-white/10 dark:border-slate-800/50 animate-in zoom-in-95 duration-500">
         <div className="flex justify-between items-center mb-10">
           <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{t('addPayment')}</h2>
           <button onClick={onClose} className="p-3 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 transition-all active:scale-90"><X size={22} strokeWidth={3} /></button>
@@ -1357,7 +1357,7 @@ function DeleteConfirmModal({ t, onClose, onConfirm }: any) {
   return (
     <div className="fixed inset-0 z-[140] flex items-center justify-center p-6 animate-in fade-in duration-300">
       <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-xl" onClick={onClose}></div>
-      <div className="relative bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3.8rem] p-12 shadow-2xl text-center border border-white/10 dark:border-slate-800/50">
+      <div className="relative bg-white dark:bg-slate-900 w-full max-sm:w-[95%] max-w-sm rounded-[3.8rem] p-12 shadow-2xl text-center border border-white/10 dark:border-slate-800/50">
         <div className="w-28 h-28 bg-rose-500/10 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-10 shadow-inner">
           <Trash2 size={56} strokeWidth={2.5} />
         </div>
@@ -1376,7 +1376,7 @@ function SettleConfirmModal({ t, lang, loan, onClose, onConfirm }: any) {
   return (
     <div className="fixed inset-0 z-[140] flex items-center justify-center p-6 animate-in fade-in duration-300">
       <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-xl" onClick={onClose}></div>
-      <div className="relative bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3.8rem] p-12 shadow-2xl text-center border border-white/10 dark:border-slate-800/50">
+      <div className="relative bg-white dark:bg-slate-900 w-full max-sm:w-[95%] max-w-sm rounded-[3.8rem] p-12 shadow-2xl text-center border border-white/10 dark:border-slate-800/50">
         <div className="w-28 h-28 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-10 shadow-inner">
           <CheckCircle size={56} strokeWidth={2.5} />
         </div>
@@ -1523,7 +1523,7 @@ function CategoryManagerModal({ t, lang, onClose, categories, onUpdateCategories
   return (
     <div className="fixed inset-0 z-[130] flex items-center justify-center p-6 animate-in fade-in duration-300">
       <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-xl" onClick={onClose}></div>
-      <div className="relative bg-white dark:bg-slate-900 w-full max-w-md rounded-[3.8rem] p-12 shadow-2xl animate-in zoom-in-95 duration-500 flex flex-col max-h-[85vh] border border-white/20 dark:border-slate-800/50">
+      <div className="relative bg-white dark:bg-slate-900 w-full max-sm:w-[95%] max-w-md rounded-[3.8rem] p-12 shadow-2xl animate-in zoom-in-95 duration-500 flex flex-col max-h-[85vh] border border-white/20 dark:border-slate-800/50">
         <div className="flex justify-between items-center mb-12">
           <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{t('manageCategories')}</h2>
           <button onClick={onClose} className="p-3 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 active:scale-90 transition-all"><X size={22} strokeWidth={3}/></button>
