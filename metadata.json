@@ -1,5 +1,5 @@
 {
-  "name": "PassNest",
-  "description": "A completely offline, secure password manager with category management and backup/restore features, designed with a Bengali interface.",
+  "name": "আমার খাতা (Amar Khata)",
+  "description": "একটি সম্পূর্ণ অফলাইন ব্যক্তিগত আয়-ব্যয় এবং ঋণ ট্র্যাকার অ্যাপ্লিকেশন। আপনার দৈনিক হিসাব রাখুন সহজেই।",
   "requestFramePermissions": []
 }
