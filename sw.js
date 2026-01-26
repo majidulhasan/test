@@ -1,26 +1,21 @@
-const CACHE_NAME = 'amar-khata-v3';
-const ASSETS_TO_CACHE = [
+
+const CACHE_NAME = 'amar-khata-v4';
+const ASSETS = [
   './',
   './index.html',
-  './index.tsx',
-  './types.ts',
   './manifest.json',
   'https://cdn.tailwindcss.com',
   'https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap'
 ];
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
   );
 });
 
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request).then(res => res || fetch(e.request))
   );
 });

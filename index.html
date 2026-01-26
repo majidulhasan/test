@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -6,10 +7,7 @@
     <meta name="theme-color" content="#4f46e5">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link rel="manifest" href="./manifest.json">
-    <link rel="apple-touch-icon" href="https://api.dicebear.com/7.x/initials/svg?seed=AK&backgroundColor=4f46e5">
-    
-    <title>আমার খাতা - ব্যক্তিগত হিসাব</title>
+    <title>আমার খাতা - ডিজিটাল হিসাব ডায়েরি</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -22,22 +20,13 @@
             font-family: 'Hind Siliguri', sans-serif;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
+            overflow-x: hidden;
         }
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        @keyframes progress {
-          0% { transform: translateX(-100%); }
-          50% { transform: translateX(0); }
-          100% { transform: translateX(100%); }
-        }
-        .animate-progress {
-          animation: progress 1s infinite linear;
-        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
     </style>
 <script type="importmap">
 {
@@ -46,24 +35,16 @@
     "react": "https://esm.sh/react@^19.2.3",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
-    "recharts": "https://esm.sh/recharts@^3.7.0"
+    "recharts": "https://esm.sh/recharts@^3.7.0",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
 }
 </script>
 <link rel="stylesheet" href="/index.css">
 </head>
-<body class="bg-gray-50 text-gray-900 transition-colors duration-300">
+<body class="bg-[#FAFBFF] dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
     <div id="root"></div>
-    <script type="module" src="./index.tsx"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js', { scope: './' })
-                    .then(reg => console.log('Service Worker registered'))
-                    .catch(err => console.log('SW registration failed:', err));
-            });
-        }
-    </script>
-<script type="module" src="/index.tsx"></script>
+    <script type="module" src="/index.tsx"></script>
 </body>
 </html>
