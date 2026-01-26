@@ -1,0 +1,5 @@
+{
+  "name": "PassNest",
+  "description": "A completely offline, secure password manager with category management and backup/restore features, designed with a Bengali interface.",
+  "requestFramePermissions": []
+}
