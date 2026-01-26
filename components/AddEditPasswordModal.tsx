@@ -21,6 +21,7 @@ const AddEditPasswordModal: React.FC<Props> = ({
   isOpen, onClose, onSave, initialData, defaultCategoryId, categories, customColors, isDarkMode 
 }) => {
   const [formData, setFormData] = useState({
+    id: '', // Added ID to fix duplication during edit
     categoryId: '',
     newCategoryName: '',
     newCategoryColor: PRESET_COLORS[0],
@@ -36,6 +37,7 @@ const AddEditPasswordModal: React.FC<Props> = ({
     if (isOpen) {
       if (initialData) {
         setFormData({
+          id: initialData.id,
           categoryId: initialData.categoryId,
           newCategoryName: '',
           newCategoryColor: PRESET_COLORS[0],
@@ -47,6 +49,7 @@ const AddEditPasswordModal: React.FC<Props> = ({
       } else {
         const initialCatId = defaultCategoryId && defaultCategoryId !== 'all' ? defaultCategoryId : '';
         setFormData({
+          id: '',
           categoryId: initialCatId,
           newCategoryName: '',
           newCategoryColor: PRESET_COLORS[0],
@@ -57,10 +60,12 @@ const AddEditPasswordModal: React.FC<Props> = ({
         });
       }
       setIsSelectingCategory(false);
+      setShowPw(false);
     }
   }, [initialData, categories, isOpen, defaultCategoryId]);
 
   const handleSave = () => {
+    if (!formData.title || !formData.username || !formData.passwordValue) return;
     onSave(formData);
   };
 
@@ -68,7 +73,6 @@ const AddEditPasswordModal: React.FC<Props> = ({
 
   if (!isOpen) return null;
 
-  // এডিট মোড (initialData থাকলে) অথবা নির্দিষ্ট ক্যাটাগরি ফিল্টার অন থাকলে ক্যাটাগরি সিলেকশন হাইড থাকবে
   const isFixedCategory = !!initialData || (defaultCategoryId !== undefined && defaultCategoryId !== 'all');
 
   return (
@@ -81,7 +85,6 @@ const AddEditPasswordModal: React.FC<Props> = ({
         </h2>
 
         <div className="space-y-8">
-          {/* Category Selection - শুধুমাত্র নতুন পাসওয়ার্ড যোগ করার সময় এবং All সিলেক্ট থাকলে দেখাবে */}
           {!isFixedCategory ? (
             <div className="relative">
               <label className="absolute -top-3 left-4 bg-inherit px-2 text-sm font-medium text-blue-600 z-10">ক্যাটাগরি</label>
@@ -98,7 +101,6 @@ const AddEditPasswordModal: React.FC<Props> = ({
               </button>
             </div>
           ) : (
-            // এডিট মোডে ক্যাটাগরির নাম শুধু টেক্সট হিসেবে দেখানো যেতে পারে চাইলে, অথবা কিছু না দেখালেও চলে
             initialData && (
               <div className="flex items-center gap-2 px-1">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: selectedCategory?.color || '#3b82f6' }} />
@@ -107,7 +109,6 @@ const AddEditPasswordModal: React.FC<Props> = ({
             )
           )}
 
-          {/* Inline New Category Creator - শুধুমাত্র নতুন এন্ট্রি মোডে কাজ করবে */}
           {formData.isCreatingNewCategory && !isFixedCategory && (
             <div className="p-5 rounded-2xl bg-blue-50/50 dark:bg-blue-900/10 border-2 border-blue-500/30 space-y-5 animate-modalIn">
               <div className="relative">
@@ -121,20 +122,10 @@ const AddEditPasswordModal: React.FC<Props> = ({
                   onChange={(e) => setFormData({ ...formData, newCategoryName: e.target.value })}
                 />
               </div>
-              
               <div className="space-y-3">
                 <label className="text-[10px] font-black uppercase text-blue-600 ml-1 flex items-center gap-2"><Palette size={12} /> রঙ নির্বাচন করুন</label>
                 <div className="flex flex-wrap gap-2 max-h-[80px] overflow-y-auto no-scrollbar">
-                  {PRESET_COLORS.map(color => (
-                    <button
-                      key={color}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, newCategoryColor: color })}
-                      className={`w-8 h-8 rounded-full border-2 transition-all active:scale-90 ${formData.newCategoryColor === color ? 'border-white dark:border-gray-500 scale-110 shadow-lg' : 'border-transparent opacity-60'}`}
-                      style={{ backgroundColor: color }}
-                    />
-                  ))}
-                  {customColors.map(color => (
+                  {[...PRESET_COLORS, ...customColors].map(color => (
                     <button
                       key={color}
                       type="button"
@@ -148,7 +139,6 @@ const AddEditPasswordModal: React.FC<Props> = ({
             </div>
           )}
 
-          {/* Form Fields */}
           <div className="relative">
             <label className="absolute -top-3 left-4 bg-inherit px-2 text-sm font-medium text-blue-600 z-10">ওয়েবসাইট/অ্যাপের নাম</label>
             <input
@@ -186,14 +176,13 @@ const AddEditPasswordModal: React.FC<Props> = ({
 
           <button
             onClick={handleSave}
-            disabled={(!formData.categoryId && !formData.newCategoryName && !isFixedCategory) || !formData.title}
+            disabled={(!formData.categoryId && !formData.newCategoryName && !isFixedCategory) || !formData.title || !formData.username || !formData.passwordValue}
             className={`w-full py-5 bg-blue-600 text-white rounded-2xl font-bold text-lg shadow-xl shadow-blue-500/20 active:scale-95 transition-all mt-4 disabled:opacity-50 disabled:shadow-none`}
           >
             {initialData ? 'আপডেট করুন' : 'সংরক্ষণ করুন'}
           </button>
         </div>
 
-        {/* Category Picker Overlay */}
         {isSelectingCategory && !isFixedCategory && (
           <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fadeIn">
             <div className={`w-full max-w-sm rounded-t-[2.5rem] sm:rounded-[2.5rem] p-8 animate-modalIn ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'}`}>
