@@ -24,15 +24,14 @@
         body {
             font-family: 'Hind Siliguri', sans-serif;
             -webkit-tap-highlight-color: transparent;
-            user-select: none;
         }
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes progress {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
         }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        .animate-progress { animation: progress 1.5s infinite linear; }
     </style>
     <script type="importmap">
 {
@@ -50,14 +49,11 @@
 </head>
 <body class="bg-gray-50 text-gray-900 transition-colors duration-300">
     <div id="root"></div>
-    <!-- Load as a module with .tsx extension -->
-    <script type="module" src="index.tsx"></script>
+    <script type="module" src="./index.tsx"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js', { scope: './' })
-                    .then(reg => console.log('SW Registered'))
-                    .catch(err => console.log('SW Failed', err));
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error', err));
             });
         }
     </script>
