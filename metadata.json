@@ -1,13 +1,5 @@
-
 {
-  "name": "Tally Khata Tracker Pro",
-  "short_name": "TallyKhata",
-  "description": "Smart daily income and expense tracker with AI insights.",
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#0d9488",
-  "background_color": "#f8fafc",
-  "requestFramePermissions": [
-    "camera"
-  ]
+  "name": "PassNest",
+  "description": "A completely offline, secure password manager with category management and backup/restore features, designed with a Bengali interface.",
+  "requestFramePermissions": []
 }

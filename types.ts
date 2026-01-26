@@ -1,45 +1,32 @@
 
-export type TransactionType = 'income' | 'expense';
-export type PaymentMethod = 'cash' | 'credit';
-
-export interface Person {
+export interface Category {
   id: string;
   name: string;
-  phone?: string;
-  type: string; 
-  balance: number; 
-  dueDate?: string;
+  color?: string;
 }
 
-export interface Transaction {
+export interface PasswordEntry {
   id: string;
-  amount: number;
-  type: TransactionType;
-  method: PaymentMethod;
-  category: string;
-  date: string; 
-  personId?: string; 
-  source?: string; 
-  note?: string;
-  image?: string; 
-  dueDate?: string;
+  categoryId: string;
+  title: string;
+  username: string;
+  passwordValue: string;
+  createdAt: number;
 }
 
-export interface AppSettings {
-  language: 'bn' | 'en';
-  theme: 'light' | 'dark';
-  monthlyBudget: number;
-  pin?: string;
-  isPinEnabled: boolean;
-  customCategories?: {
-    income: string[];
-    expense: string[];
-  };
+export interface SecurityQuestion {
+  question: string;
+  answer: string;
 }
 
-export interface MonthlyNote {
-  monthYear: string; 
-  content: string;
+export interface AppState {
+  passwords: PasswordEntry[];
+  categories: Category[];
+  customColors: string[];
+  isDarkMode: boolean;
+  masterPassword?: string;
+  pinLength: number; // Support 4 or 6
+  autoLockSeconds: number;
+  lockOnExit: boolean;
+  securityQuestions?: SecurityQuestion[];
 }
-
-export type ViewState = 'dashboard' | 'transactions' | 'reports' | 'settings' | 'add' | 'baki' | 'ai_insights';

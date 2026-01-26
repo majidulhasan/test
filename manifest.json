@@ -1,14 +1,15 @@
+
 {
-  "name": "PassNest 𝐁𝐲 ➤ 𝗠 𝗛 {𝗦𝗵𝗮𝗵𝗶𝗻}",
+  "name": "PassNest Offline",
   "short_name": "PassNest",
-  "start_url": "index.html",
+  "description": "Secure Offline Password Manager",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#007BFF",
-  "description": "আপনার পাসওয়ার্ড সুরক্ষিত রাখার সহজ সমাধান।",
+  "theme_color": "#2563eb",
   "icons": [
     {
-      "src": "icon.png",
+      "src": "https://cdn-icons-png.flaticon.com/512/3064/3064155.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
