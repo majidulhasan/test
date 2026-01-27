@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'amar-khata-cache-v2';
+const CACHE_NAME = 'amar-khata-cache-v6';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -11,10 +11,10 @@ const ASSETS_TO_CACHE = [
   './services/storage.ts',
   'https://cdn.tailwindcss.com',
   'https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap',
-  'https://esm.sh/react@^19.2.3',
-  'https://esm.sh/react-dom@^19.2.3/client',
-  'https://esm.sh/lucide-react@^0.563.0',
-  'https://esm.sh/recharts@^3.7.0'
+  'https://esm.sh/react@18.3.1',
+  'https://esm.sh/react-dom@18.3.1',
+  'https://esm.sh/lucide-react@0.454.0?external=react',
+  'https://esm.sh/recharts@2.12.7?external=react,react-dom'
 ];
 
 self.addEventListener('install', (event) => {
@@ -44,9 +44,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
-      return response || fetch(event.request).catch(() => {
-        // Optional: Return a custom offline page if both fail
-      });
+      return response || fetch(event.request);
     })
   );
 });
