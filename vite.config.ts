@@ -1,13 +1,21 @@
-
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: './', // গিটহাব পেজেস-এ রিলেটিভ পাথ ঠিক রাখার জন্য
+  base: './', // সাব-ডিরেক্টরি বা রুট উভয় জায়গার জন্য পারফেক্ট
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    sourcemap: false
+    sourcemap: false,
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'lucide-react', 'recharts']
+        }
+      }
+    }
   }
 });
