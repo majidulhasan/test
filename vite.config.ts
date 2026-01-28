@@ -1,13 +1,13 @@
 
 import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  base: './',
+  plugins: [react()],
+  base: './', // গিটহাব পেজেস-এ রিলেটিভ পাথ ঠিক রাখার জন্য
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-  },
-  server: {
-    port: 3000
+    sourcemap: false
   }
 });

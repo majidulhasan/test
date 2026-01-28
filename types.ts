@@ -61,8 +61,6 @@ export interface AppSettings {
   reminderEnabled: boolean;
   reminderTime: string; // HH:mm format
   lastAutoBackup?: string;
-  password?: string;
-  securityEnabled: boolean;
 }
 
 export interface StorageData {
