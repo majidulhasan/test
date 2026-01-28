@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
   LayoutDashboard, History, PieChart as ChartIcon, Settings as SettingsIcon, Plus, FileText,
@@ -113,7 +112,7 @@ export default function App() {
         {activeTab === 'summary' && <SummaryView t={t} transactions={data.khata.transactions} totals={totals} />}
         {activeTab === 'notes' && <NotesView t={t} notes={data.khata.notes} setNotes={(n: MonthlyNote[]) => setData(p => ({...p, khata: {...p.khata, notes: n}}))} />}
         {activeTab === 'reports' && <ReportsView t={t} transactions={data.khata.transactions} theme={currentTheme} />}
-        {activeTab === 'settings' && <SettingsView t={t} onShowDevProfile={() => setShowDevModal(true)} onExport={storage.exportToJSON} theme={currentTheme} settings={data.settings} onUpdateSettings={(s) => setData(p => ({...p, settings: {...p.settings, ...s}}))} />}
+        {activeTab === 'settings' && <SettingsView t={t} onShowDevProfile={() => setShowDevModal(true)} onExport={storage.exportToJSON} theme={currentTheme} settings={data.settings} onUpdateSettings={(s: any) => setData(p => ({...p, settings: {...p.settings, ...s}}))} />}
       </main>
 
       <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50">
@@ -279,8 +278,6 @@ function ReportsView({ t, transactions, theme }: any) {
       expense: transactions.filter((t: Transaction) => t.date === date && t.type === 'EXPENSE').reduce((s: number, t: Transaction) => s + t.amount, 0),
     }));
   }, [transactions]);
-
-  const color = PRESET_COLORS[theme as ThemeColor] || '#4f46e5';
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
