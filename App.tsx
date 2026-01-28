@@ -3,56 +3,30 @@ import {
   LayoutDashboard, History, PieChart as ChartIcon, Settings as SettingsIcon, Plus, FileText,
   Moon, Sun, Trash2, Download, User, TrendingUp, TrendingDown,
   ChevronRight, Calendar, Info, HelpCircle, ArrowUpCircle, ArrowDownCircle,
-  Wallet, HandCoins, AlertCircle, CheckCircle2, ClipboardList
+  Wallet, AlertCircle, CheckCircle2, ClipboardList
 } from 'lucide-react';
 import { storage } from './storage';
-import { Transaction, Loan, StorageData, ThemeColor, MonthlyNote, TransactionType } from './types';
+import { Transaction, StorageData, ThemeColor, MonthlyNote, TransactionType } from './types';
+import { PRESET_COLORS, THEME_MAP, THEME_GRADIENT, translations } from './constants';
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
-  AreaChart, Area
+  Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
+  AreaChart, Area, XAxis, YAxis, CartesianGrid
 } from 'recharts';
 
 type ActiveTab = 'dashboard' | 'history' | 'summary' | 'reports' | 'notes' | 'settings';
 
-const PRESET_COLORS: Record<string, string> = {
-  indigo: '#4f46e5', emerald: '#10b981', rose: '#f43f5e', amber: '#f59e0b',
-};
-
-const THEME_MAP: Record<ThemeColor, string> = {
-  indigo: 'bg-indigo-600 shadow-indigo-200 text-indigo-600 dark:text-indigo-400',
-  emerald: 'bg-emerald-600 shadow-emerald-200 text-emerald-600 dark:text-emerald-400',
-  rose: 'bg-rose-600 shadow-rose-200 text-rose-600 dark:text-rose-400',
-  amber: 'bg-amber-600 shadow-amber-200 text-amber-600 dark:text-amber-400',
-  custom: 'bg-[var(--theme-color)] shadow-gray-200 text-[var(--theme-color)] dark:text-[var(--theme-color)]',
-};
-
-const THEME_GRADIENT: Record<ThemeColor, string> = {
-  indigo: 'from-indigo-600 to-violet-700', emerald: 'from-emerald-600 to-teal-700',
-  rose: 'from-rose-600 to-pink-700', amber: 'from-amber-600 to-orange-700',
-  custom: 'from-[var(--theme-color)] to-black/30',
-};
-
-const translations: any = {
-  bn: {
-    appTitle: 'আমার খাতা', diaryTitle: 'আমার ডিজিটাল ডায়েরি', home: 'হোম', history: 'হিসাব', summary: 'সংক্ষিপ্ত', reports: 'রিপোর্ট', settings: 'সেটিং', currentBalance: 'বর্তমান ব্যালেন্স', totalIncome: 'মোট আয়', totalExpense: 'মোট ব্যয়', todayIncome: 'আজকের আয়', todayExpense: 'আজকের ব্যয়', loanGiven: 'পাওনা টাকা', loanTaken: 'ধার নেওয়া', recentHistory: 'সাম্প্রতিক হিসাব', seeAll: 'সব দেখুন', language: 'অ্যাপের ভাষা', devProfile: 'ডেভেলপার পরিচিতি', usageGuide: 'ব্যবহার বিধি', backup: 'ব্যাকআপ ডাউনলোড', restore: 'ব্যাকআপ রিস্টোর', themeColor: 'থিম কালার', save: 'সংরক্ষণ করুন', update: 'আপডেট করুন', addEntry: 'হিসাব যোগ করুন', editEntry: 'হিসাব সংশোধন', monthlyNote: 'নোটসমূহ', devName: 'মো: মাজিদুল হাসান {শাহীন}', close: 'বন্ধ করুন', monthlySummary: 'মাসিক সারসংক্ষেপ', balance: 'অবশিষ্ট', confirmDelete: 'আপনি কি নিশ্চিত?', deleteWarn: 'এই হিসাবটি ডিলেট করলে আর ফিরে পাওয়া যাবে না।', deleteBtn: 'হ্যাঁ, ডিলেট করুন', cancelBtn: 'না, থাক', noteDetails: 'বিস্তারিত তথ্য', transactionNotes: 'নোটসমূহ', dateLabel: 'তারিখ', incomeType: 'আয়', expenseType: 'ব্যয়'
-  },
-  en: {
-    appTitle: 'Amar Khata', diaryTitle: 'My Digital Diary', home: 'Home', history: 'History', summary: 'Summary', reports: 'Reports', settings: 'Settings', currentBalance: 'Current Balance', totalIncome: 'Total Income', totalExpense: 'Total Expense', todayIncome: 'Today Income', todayExpense: 'Today Expense', loanGiven: 'Money Owed', loanTaken: 'Money Borrowed', recentHistory: 'Recent Transactions', seeAll: 'See All', language: 'App Language', devProfile: 'Developer Profile', usageGuide: 'Usage Guide', backup: 'Download Backup', restore: 'Restore Backup', themeColor: 'Theme Color', save: 'Save Changes', update: 'Update Entry', addEntry: 'Add Entry', editEntry: 'Edit Entry', monthlyNote: 'Notes', devName: 'Md. Majidul Hasan {Shahin}', close: 'Close', monthlySummary: 'Monthly Summary', balance: 'Balance', confirmDelete: 'Are you sure?', deleteWarn: 'If deleted, it cannot be recovered.', deleteBtn: 'Yes, Delete', cancelBtn: 'No, Keep', noteDetails: 'Detailed Info', transactionNotes: 'Notes', dateLabel: 'Date', incomeType: 'Income', expenseType: 'Expense'
-  }
-};
-
 export default function App() {
-  const [data, setData] = useState<StorageData>(storage.getData());
+  // Safe initialization
+  const [data, setData] = useState<StorageData>(() => storage.getData());
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
-  const [isDarkMode, setIsDarkMode] = useState(data.settings.theme === 'dark');
+  const [isDarkMode, setIsDarkMode] = useState(() => data.settings.theme === 'dark');
   const [showEntryModal, setShowEntryModal] = useState(false);
-  const [editingItem, setEditingItem] = useState<any>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState<{id: string, isLoan: boolean} | null>(null);
   const [showDevModal, setShowDevModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const lang = data.settings.language || 'bn';
-  const t = (key: string) => translations[lang][key] || key;
+  const t = (key: string) => translations[lang]?.[key] || key;
 
   const activeColorHex = useMemo(() => {
     if (data.settings.themeColor === 'custom') return data.settings.customHex || '#6366f1';
@@ -67,26 +41,39 @@ export default function App() {
   }, [data, isDarkMode, activeColorHex]);
 
   const totals = useMemo(() => {
-    const income = data.khata.transactions.filter(t => t.type === 'INCOME').reduce((s, t) => s + t.amount, 0);
-    const expense = data.khata.transactions.filter(t => t.type === 'EXPENSE').reduce((s, t) => s + t.amount, 0);
-    const loanTaken = data.khata.loans.filter(l => l.type === 'TAKEN' && l.status === 'PENDING').reduce((s, l) => s + l.amount, 0);
-    const loanGiven = data.khata.loans.filter(l => l.type === 'GIVEN' && l.status === 'PENDING').reduce((s, l) => s + l.amount, 0);
+    const transactions = data.khata?.transactions || [];
+    const loans = data.khata?.loans || [];
+    
+    const income = transactions.filter(t => t.type === 'INCOME').reduce((s, t) => s + t.amount, 0);
+    const expense = transactions.filter(t => t.type === 'EXPENSE').reduce((s, t) => s + t.amount, 0);
+    const loanTaken = loans.filter(l => l.type === 'TAKEN' && l.status === 'PENDING').reduce((s, l) => s + l.amount, 0);
+    const loanGiven = loans.filter(l => l.type === 'GIVEN' && l.status === 'PENDING').reduce((s, l) => s + l.amount, 0);
+    
     return { income, expense, loanTaken, loanGiven, balance: income - expense + loanTaken - loanGiven };
   }, [data.khata.transactions, data.khata.loans]);
 
   const handleAddEntry = (entry: { entryType: TransactionType, amount: number, category: string, date: string, note?: string }) => {
     setIsLoading(true);
     setTimeout(() => {
-      const id = editingItem?.id || crypto.randomUUID();
-      const newT: Transaction = { id, type: entry.entryType, amount: entry.amount, category: entry.category, note: entry.note || '', date: entry.date };
+      const id = crypto.randomUUID();
+      const newT: Transaction = { 
+        id, 
+        type: entry.entryType, 
+        amount: entry.amount, 
+        category: entry.category, 
+        note: entry.note || '', 
+        date: entry.date 
+      };
+      
       setData(prev => ({ 
         ...prev, 
         khata: { 
           ...prev.khata, 
-          transactions: editingItem ? prev.khata.transactions.map(item => item.id === id ? newT : item) : [newT, ...prev.khata.transactions] 
+          transactions: [newT, ...(prev.khata?.transactions || [])] 
         }
       }));
-      setIsLoading(false); setShowEntryModal(false); setEditingItem(null);
+      setIsLoading(false); 
+      setShowEntryModal(false);
     }, 400);
   };
 
@@ -94,11 +81,11 @@ export default function App() {
 
   return (
     <div className={`min-h-screen flex flex-col transition-colors duration-300 ${isDarkMode ? 'dark bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
-      {isLoading && <div className="fixed top-0 left-0 w-full h-1 z-[100]"><div className={`h-full animate-progress ${THEME_MAP[currentTheme].split(' ')[0]}`}></div></div>}
+      {isLoading && <div className="fixed top-0 left-0 w-full h-1 z-[100]"><div className={`h-full animate-progress ${THEME_MAP[currentTheme]?.split(' ')[0] || 'bg-indigo-600'}`}></div></div>}
       
       <header className="px-6 py-5 flex justify-between items-center bg-white dark:bg-gray-800 border-b dark:border-gray-700 sticky top-0 z-40 backdrop-blur-lg bg-opacity-80 dark:bg-opacity-80">
         <div>
-          <p className={`text-[10px] font-bold uppercase tracking-widest ${THEME_MAP[currentTheme].split(' ')[2]}`}>{t('diaryTitle')}</p>
+          <p className={`text-[10px] font-bold uppercase tracking-widest ${THEME_MAP[currentTheme]?.split(' ')[2] || 'text-indigo-600'}`}>{t('diaryTitle')}</p>
           <h1 className="text-xl font-extrabold text-gray-900 dark:text-gray-100">{t('appTitle')}</h1>
         </div>
         <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2.5 rounded-2xl bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 transition-all hover:scale-110 active:scale-95">
@@ -110,13 +97,13 @@ export default function App() {
         {activeTab === 'dashboard' && <DashboardView t={t} totals={totals} transactions={data.khata.transactions} theme={currentTheme} onShowAll={() => setActiveTab('history')} />}
         {activeTab === 'history' && <HistoryView t={t} transactions={data.khata.transactions} onDelete={(id:string) => setDeleteConfirmation({id, isLoan:false})} />}
         {activeTab === 'summary' && <SummaryView t={t} transactions={data.khata.transactions} totals={totals} />}
-        {activeTab === 'notes' && <NotesView t={t} notes={data.khata.notes} setNotes={(n: MonthlyNote[]) => setData(p => ({...p, khata: {...p.khata, notes: n}}))} />}
+        {activeTab === 'notes' && <NotesView t={t} notes={data.khata.notes || []} setNotes={(n: MonthlyNote[]) => setData(p => ({...p, khata: {...p.khata, notes: n}}))} />}
         {activeTab === 'reports' && <ReportsView t={t} transactions={data.khata.transactions} theme={currentTheme} />}
         {activeTab === 'settings' && <SettingsView t={t} onShowDevProfile={() => setShowDevModal(true)} onExport={storage.exportToJSON} theme={currentTheme} settings={data.settings} onUpdateSettings={(s: any) => setData(p => ({...p, settings: {...p.settings, ...s}}))} />}
       </main>
 
       <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50">
-        <button onClick={() => { setEditingItem(null); setShowEntryModal(true); }} className={`${THEME_MAP[currentTheme].split(' ')[0]} text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-90 transition-all ring-4 ring-white dark:ring-gray-800`}>
+        <button onClick={() => setShowEntryModal(true)} className={`${THEME_MAP[currentTheme]?.split(' ')[0] || 'bg-indigo-600'} text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-90 transition-all ring-4 ring-white dark:ring-gray-800`}>
           <Plus size={32} strokeWidth={3} />
         </button>
       </div>
@@ -142,7 +129,7 @@ export default function App() {
 }
 
 function NavItem({ icon, label, active, theme, onClick }: any) {
-  const activeClass = THEME_MAP[theme as ThemeColor].split(' ')[2];
+  const activeClass = THEME_MAP[theme as ThemeColor]?.split(' ')[2] || 'text-indigo-600';
   return (
     <button onClick={onClick} className={`flex flex-col items-center gap-1 transition-all ${active ? `${activeClass} scale-110 font-bold` : 'text-gray-400 dark:text-gray-500'}`}>
       {icon} <span className="text-[10px] font-bold">{label}</span>
@@ -151,8 +138,8 @@ function NavItem({ icon, label, active, theme, onClick }: any) {
 }
 
 function DashboardView({ t, totals, transactions, theme, onShowAll }: any) {
-  const gradientClass = THEME_GRADIENT[theme as ThemeColor];
-  const recentItems = transactions.slice(0, 5);
+  const gradientClass = THEME_GRADIENT[theme as ThemeColor] || 'from-indigo-600 to-violet-700';
+  const recentItems = transactions ? transactions.slice(0, 5) : [];
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className={`bg-gradient-to-br ${gradientClass} rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden group`}>
@@ -196,7 +183,7 @@ function HistoryView({ t, transactions, onDelete }: any) {
   return (
     <div className="space-y-4 animate-in fade-in duration-500">
       <h3 className="text-xl font-black mb-4 flex items-center gap-2"><History size={24} /> {t('history')}</h3>
-      {transactions.length === 0 ? (
+      {!transactions || transactions.length === 0 ? (
         <div className="text-center py-20 opacity-30 italic">হিসাব খাতা খালি</div>
       ) : transactions.map((item: Transaction) => (
         <div key={item.id} className="bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm flex items-center justify-between">
@@ -218,6 +205,7 @@ function HistoryView({ t, transactions, onDelete }: any) {
 
 function SummaryView({ t, totals, transactions }: any) {
   const categorySummary = useMemo(() => {
+    if (!transactions) return [];
     const summary: Record<string, number> = {};
     transactions.forEach((t: Transaction) => {
       if (t.type === 'EXPENSE') {
@@ -233,7 +221,7 @@ function SummaryView({ t, totals, transactions }: any) {
       <div className="bg-white dark:bg-gray-800 p-6 rounded-[2rem] border dark:border-gray-700 shadow-sm">
         <div className="flex justify-between items-center mb-6">
           <h4 className="font-bold text-sm uppercase opacity-50 tracking-wider">ব্যয় বিশ্লেষণ</h4>
-          <PieChart size={16} className="opacity-20" />
+          <ChartIcon size={16} className="opacity-20" />
         </div>
         {categorySummary.length === 0 ? (
           <div className="text-center py-10 opacity-30 italic text-sm">কোনো ব্যয় পাওয়া যায়নি</div>
@@ -266,6 +254,7 @@ function SummaryView({ t, totals, transactions }: any) {
 
 function ReportsView({ t, transactions, theme }: any) {
   const chartData = useMemo(() => {
+    if (!transactions) return [];
     const last7Days = [...Array(7)].map((_, i) => {
       const d = new Date();
       d.setDate(d.getDate() - i);
@@ -307,74 +296,50 @@ function ReportsView({ t, transactions, theme }: any) {
           </ResponsiveContainer>
         </div>
       </div>
-      <div className="bg-gray-100 dark:bg-gray-800/50 p-4 rounded-2xl flex items-center gap-3">
-        <HelpCircle size={16} className="text-indigo-500" />
-        <p className="text-[10px] leading-relaxed opacity-50 uppercase font-bold">এই চার্টটি আপনার প্রতিদিনের আয় এবং ব্যয়ের তুলনামূলক চিত্র তুলে ধরে। সবুজ মানে আয় এবং লাল মানে ব্যয়।</p>
-      </div>
     </div>
   );
 }
 
 function NotesView({ t, notes, setNotes }: any) {
   const activeMonth = useMemo(() => new Date().toISOString().substring(0, 7), []);
-  const currentNote = notes.find((n: MonthlyNote) => n.month === activeMonth);
+  const currentNote = (notes || []).find((n: MonthlyNote) => n.month === activeMonth);
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <h3 className="font-black text-xl flex items-center gap-2"><FileText size={24} /> {t('monthlyNote')}</h3>
-      <div className="relative group">
-        <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-emerald-500 rounded-[3rem] blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
-        <textarea 
-          className="relative w-full h-80 p-8 rounded-[3rem] bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 outline-none shadow-sm dark:text-gray-100 leading-relaxed text-sm focus:ring-2 ring-indigo-500/20 transition-all" 
-          placeholder="আপনার বিশেষ নোট এখানে লিখে রাখুন..." 
-          value={currentNote?.text || ''} 
-          onChange={(e) => {
-            const text = e.target.value;
-            if (currentNote) {
-              setNotes(notes.map((n: MonthlyNote) => n.month === activeMonth ? { ...n, text } : n));
-            } else {
-              setNotes([...notes, { id: crypto.randomUUID(), month: activeMonth, text }]);
-            }
-          }} 
-        />
-      </div>
-      <p className="text-center text-[10px] opacity-30 uppercase font-bold tracking-widest">{activeMonth} - এর জন্য নোট সংরক্ষিত হচ্ছে</p>
+      <textarea 
+        className="relative w-full h-80 p-8 rounded-[3rem] bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 outline-none shadow-sm dark:text-gray-100 leading-relaxed text-sm focus:ring-2 ring-indigo-500/20 transition-all" 
+        placeholder="আপনার বিশেষ নোট এখানে লিখে রাখুন..." 
+        value={currentNote?.text || ''} 
+        onChange={(e) => {
+          const text = e.target.value;
+          if (currentNote) {
+            setNotes(notes.map((n: MonthlyNote) => n.month === activeMonth ? { ...n, text } : n));
+          } else {
+            setNotes([...(notes || []), { id: crypto.randomUUID(), month: activeMonth, text }]);
+          }
+        }} 
+      />
     </div>
   );
 }
 
-function SettingsView({ t, onShowDevProfile, onExport, theme, settings, onUpdateSettings }: any) {
+function SettingsView({ t, onShowDevProfile, onExport, settings, onUpdateSettings }: any) {
   return (
     <div className="space-y-4 animate-in fade-in duration-500">
       <h3 className="text-xl font-black mb-4 flex items-center gap-2"><SettingsIcon size={24} /> {t('settings')}</h3>
-      
       <div className="bg-white dark:bg-gray-800 rounded-3xl p-2 shadow-sm border dark:border-gray-700">
         <button onClick={() => onUpdateSettings({ language: settings.language === 'bn' ? 'en' : 'bn' })} className="w-full p-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-2xl transition-colors">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-amber-100 text-amber-600 dark:bg-amber-900/20 rounded-xl"><Info size={18}/></div>
-            <span className="font-bold text-sm">{t('language')}</span>
-          </div>
+          <div className="flex items-center gap-3"><div className="p-2 bg-amber-100 text-amber-600 dark:bg-amber-900/20 rounded-xl"><Info size={18}/></div><span className="font-bold text-sm">{t('language')}</span></div>
           <span className="text-xs font-black uppercase text-indigo-500">{settings.language === 'bn' ? 'বাংলা' : 'English'}</span>
         </button>
-
         <button onClick={onShowDevProfile} className="w-full p-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-2xl transition-colors">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-indigo-100 text-indigo-600 dark:bg-indigo-900/20 rounded-xl"><User size={18}/></div>
-            <span className="font-bold text-sm">{t('devProfile')}</span>
-          </div>
+          <div className="flex items-center gap-3"><div className="p-2 bg-indigo-100 text-indigo-600 dark:bg-indigo-900/20 rounded-xl"><User size={18}/></div><span className="font-bold text-sm">{t('devProfile')}</span></div>
           <ChevronRight size={16} className="opacity-30" />
         </button>
-
         <button onClick={onExport} className="w-full p-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-2xl transition-colors border-t dark:border-gray-700 mt-2 pt-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 text-blue-600 dark:bg-blue-900/20 rounded-xl"><Download size={18}/></div>
-            <span className="font-bold text-sm">{t('backup')}</span>
-          </div>
+          <div className="flex items-center gap-3"><div className="p-2 bg-blue-100 text-blue-600 dark:bg-blue-900/20 rounded-xl"><Download size={18}/></div><span className="font-bold text-sm">{t('backup')}</span></div>
           <ChevronRight size={16} className="opacity-30" />
         </button>
-      </div>
-
-      <div className="p-6 text-center opacity-20">
-        <p className="text-[10px] font-bold uppercase tracking-widest">Version 2.5.0 Gold Edition</p>
       </div>
     </div>
   );
@@ -385,50 +350,21 @@ function EntryModal({ t, onClose, onSubmit, theme }: any) {
   const [type, setType] = useState<TransactionType>('EXPENSE');
   const [category, setCategory] = useState('অন্যান্য');
   
-  const accentColor = type === 'INCOME' ? 'text-emerald-500' : 'text-rose-500';
-
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-[2.5rem] w-full max-w-md shadow-2xl scale-in-center animate-in zoom-in-95 duration-200">
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-[2.5rem] w-full max-w-md shadow-2xl scale-in-center">
         <div className="flex gap-2 mb-6 bg-gray-100 dark:bg-gray-700 p-1.5 rounded-2xl">
           <button onClick={() => setType('INCOME')} className={`flex-1 p-3 rounded-xl font-bold transition-all ${type === 'INCOME' ? 'bg-white dark:bg-gray-600 shadow-sm text-emerald-600' : 'text-gray-400'}`}>{t('incomeType')}</button>
           <button onClick={() => setType('EXPENSE')} className={`flex-1 p-3 rounded-xl font-bold transition-all ${type === 'EXPENSE' ? 'bg-white dark:bg-gray-600 shadow-sm text-rose-600' : 'text-gray-400'}`}>{t('expenseType')}</button>
         </div>
-
         <div className="space-y-4">
-          <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-xl opacity-20">৳</span>
-            <input 
-              type="number" 
-              autoFocus
-              className={`w-full p-5 pl-10 bg-gray-50 dark:bg-gray-700 rounded-3xl outline-none border-2 border-transparent focus:border-indigo-500 transition-all font-black text-2xl ${accentColor}`}
-              placeholder="0.00" 
-              value={amount} 
-              onChange={(e) => setAmount(e.target.value)} 
-            />
-          </div>
-
-          <select 
-            className="w-full p-4 bg-gray-50 dark:bg-gray-700 rounded-2xl outline-none border-2 border-transparent focus:border-indigo-500 font-bold text-sm"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="অন্যান্য">অন্যান্য</option>
-            <option value="খাবার">খাবার</option>
-            <option value="বেতন">বেতন</option>
-            <option value="ভাড়া">ভাড়া</option>
-            <option value="যাতায়াত">যাতায়াত</option>
-            <option value="শপিং">শপিং</option>
+          <input type="number" autoFocus className="w-full p-5 bg-gray-50 dark:bg-gray-700 rounded-3xl outline-none border-2 border-transparent focus:border-indigo-500 font-black text-2xl" placeholder="0.00" value={amount} onChange={(e) => setAmount(e.target.value)} />
+          <select className="w-full p-4 bg-gray-50 dark:bg-gray-700 rounded-2xl outline-none font-bold" value={category} onChange={(e) => setCategory(e.target.value)}>
+            <option value="অন্যান্য">অন্যান্য</option><option value="খাবার">খাবার</option><option value="বেতন">বেতন</option><option value="ভাড়া">ভাড়া</option><option value="যাতায়াত">যাতায়াত</option><option value="শপিং">শপিং</option>
           </select>
-          
           <div className="flex gap-4 pt-4">
-            <button onClick={onClose} className="flex-1 p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl font-bold transition-all active:scale-95">{t('close')}</button>
-            <button 
-              onClick={() => { if(!amount) return; onSubmit({entryType: type, amount: parseFloat(amount), date: new Date().toISOString().split('T')[0], category}); }} 
-              className={`flex-1 p-4 ${THEME_MAP[theme as ThemeColor].split(' ')[0]} text-white rounded-2xl font-bold shadow-lg transition-all active:scale-95`}
-            >
-              {t('save')}
-            </button>
+            <button onClick={onClose} className="flex-1 p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl font-bold">{t('close')}</button>
+            <button onClick={() => { if(!amount) return; onSubmit({entryType: type, amount: parseFloat(amount), date: new Date().toISOString().split('T')[0], category}); }} className={`flex-1 p-4 ${THEME_MAP[theme as ThemeColor]?.split(' ')[0] || 'bg-indigo-600'} text-white rounded-2xl font-bold`}>{t('save')}</button>
           </div>
         </div>
       </div>
@@ -438,24 +374,12 @@ function EntryModal({ t, onClose, onSubmit, theme }: any) {
 
 function DevProfileModal({ t, onClose }: any) {
   return (
-    <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-[3rem] w-full max-w-sm text-center shadow-2xl animate-in zoom-in-95 duration-300">
-        <div className="w-24 h-24 bg-gradient-to-tr from-indigo-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl border-4 border-white dark:border-gray-700">
-          <User className="text-white" size={48} />
-        </div>
+    <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-[3rem] w-full max-w-sm text-center shadow-2xl">
+        <div className="w-24 h-24 bg-gradient-to-tr from-indigo-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl border-4 border-white dark:border-gray-700"><User className="text-white" size={48} /></div>
         <h2 className="text-2xl font-black mb-2 leading-none">{t('devName')}</h2>
         <p className="text-sm opacity-50 mb-8 font-bold uppercase tracking-widest">Full-Stack Engineer</p>
-        <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-2xl text-left">
-                <CheckCircle2 size={18} className="text-indigo-500" />
-                <span className="text-xs font-bold opacity-70">প্রোফেশনাল অ্যাপ ডেভেলপমেন্ট</span>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-2xl text-left">
-                <CheckCircle2 size={18} className="text-emerald-500" />
-                <span className="text-xs font-bold opacity-70">ক্লিন এবং মডার্ন ইউজার ইন্টারফেস</span>
-            </div>
-        </div>
-        <button onClick={onClose} className="p-4 bg-gray-900 dark:bg-white dark:text-gray-900 text-white w-full rounded-2xl font-black mt-8 transition-all active:scale-95 shadow-lg">{t('close')}</button>
+        <button onClick={onClose} className="p-4 bg-gray-900 dark:bg-white dark:text-gray-900 text-white w-full rounded-2xl font-black transition-all active:scale-95 shadow-lg">{t('close')}</button>
       </div>
     </div>
   );
@@ -463,15 +387,13 @@ function DevProfileModal({ t, onClose }: any) {
 
 function DeleteConfirmModal({ t, onClose, onConfirm }: any) {
   return (
-    <div className="fixed inset-0 z-[160] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[160] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
       <div className="bg-white dark:bg-gray-800 p-8 rounded-[2rem] text-center shadow-2xl max-w-xs w-full animate-in zoom-in-95 duration-200">
-        <div className="w-16 h-16 bg-rose-100 text-rose-500 dark:bg-rose-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-            <AlertCircle size={32} />
-        </div>
+        <div className="w-16 h-16 bg-rose-100 text-rose-500 dark:bg-rose-900/30 rounded-full flex items-center justify-center mx-auto mb-4"><AlertCircle size={32} /></div>
         <h3 className="font-black text-xl mb-2">{t('confirmDelete')}</h3>
         <p className="text-sm opacity-50 mb-8 leading-relaxed">{t('deleteWarn')}</p>
         <div className="flex flex-col gap-3">
-          <button onClick={onConfirm} className="p-4 bg-rose-600 text-white rounded-2xl font-bold shadow-lg shadow-rose-200 dark:shadow-none transition-all active:scale-95">{t('deleteBtn')}</button>
+          <button onClick={onConfirm} className="p-4 bg-rose-600 text-white rounded-2xl font-bold shadow-lg transition-all active:scale-95">{t('deleteBtn')}</button>
           <button onClick={onClose} className="p-4 bg-gray-100 dark:bg-gray-700 font-bold rounded-2xl transition-all active:scale-95">{t('cancelBtn')}</button>
         </div>
       </div>
