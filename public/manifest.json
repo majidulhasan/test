@@ -1,1 +1,23 @@
-
+{
+  "name": "Tailor Shop Manager",
+  "short_name": "TailorApp",
+  "description": "Professional Tailor Shop Management App",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6C3EF4",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/192/1973/1973823.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1973/1973823.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
