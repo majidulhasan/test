@@ -1,20 +1,33 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Tailor Shop Manager
 
-# Run and deploy your AI Studio app
+একটি প্রফেশনাল মোবাইল অ্যাপ যা টেইলর শপ কাস্টমার, মেজারমেন্ট, অর্ডার এবং অ্যাকাউন্ট ম্যানেজ করার জন্য তৈরি করা হয়েছে।
 
-This contains everything you need to run your app locally.
+## গিটহাবে হোস্ট করার নিয়ম (GitHub Pages)
 
-View your app in AI Studio: https://ai.studio/apps/drive/13E2YGpDYIGUR-DbzNumLdeHGC4C9AHWX
+এই অ্যাপটি গিটহাবে হোস্ট করার জন্য আমি ইতিমধ্যে সব ফাইল কনফিগার করে দিয়েছি। আপনি নিচের ধাপগুলো অনুসরণ করুন:
 
-## Run Locally
+### ধাপ ১: গিটহাবে আপলোড করুন
+১. গিটহাবে একটি নতুন রিপোজিটরি (Repository) তৈরি করুন।
+২. আপনার কোডগুলো সেই রিপোজিটরিতে আপলোড করুন। (আমি `.github/workflows/deploy.yml` ফাইলটি তৈরি করে দিয়েছি যা অটোমেটিক বিল্ড এবং ডিপ্লয় করবে)।
 
-**Prerequisites:**  Node.js
+### ধাপ ২: গিটহাব পেজ সেটিংস
+১. আপনার রিপোজিটরির **Settings** ট্যাবে যান।
+২. বাম পাশের মেনু থেকে **Pages** সিলেক্ট করুন।
+৩. **Build and deployment** সেকশনে **Source** হিসেবে **GitHub Actions** সিলেক্ট করুন।
 
+ব্যাস! এখন গিটহাব অটোমেটিক্যালি আপনার অ্যাপটি বিল্ড করে একটি লিংক দিয়ে দেবে (যেমন: `https://username.github.io/repo-name/`)।
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## বৈশিষ্ট্যসমূহ:
+- কাস্টমার ম্যানেজমেন্ট
+- মেজারমেন্ট (মাপ) সংরক্ষণ
+- অর্ডার ট্র্যাকিং
+- আয়-ব্যয় হিসাব (Accounting)
+- অফলাইন সাপোর্ট (Data ব্রাউজারে সেভ থাকে)
+- ডার্ক এবং লাইট মোড
+
+## প্রযুক্তি:
+- React
+- Vite
+- Tailwind CSS
+- Lucide Icons
+- Framer Motion (Animations)
